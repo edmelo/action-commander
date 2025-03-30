@@ -1,0 +1,92 @@
+
+{% extends 'base.html' %}
+
+{% block title %}TaskManager - Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h2>Olá, {{ session.get('user_name', 'Usuário') }}!</h2>
+    <a href="{{ url_for('add_task') }}" class="btn primary"><i class="fas fa-plus"></i> Nova Tarefa</a>
+</div>
+
+<div class="task-filters">
+    <button class="filter-btn active" data-filter="all">Todas</button>
+    <button class="filter-btn" data-filter="pending">Pendentes</button>
+    <button class="filter-btn" data-filter="completed">Concluídas</button>
+</div>
+
+<div class="tasks-container">
+    {% if tasks %}
+        {% for task in tasks %}
+            <div class="task-card {% if task.completed %}completed{% else %}pending{% endif %}">
+                <div class="task-header">
+                    <h3>{{ task.title }}</h3>
+                    <div class="task-actions">
+                        <a href="{{ url_for('complete_task', id=task.id) }}" class="task-action complete" title="{% if task.completed %}Desmarcar como concluída{% else %}Marcar como concluída{% endif %}">
+                            <i class="fas {% if task.completed %}fa-times-circle{% else %}fa-check-circle{% endif %}"></i>
+                        </a>
+                        <a href="{{ url_for('edit_task', id=task.id) }}" class="task-action edit" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{{ url_for('delete_task', id=task.id) }}" class="task-action delete" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir esta tarefa?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+                {% if task.description %}
+                    <div class="task-description">
+                        <p>{{ task.description }}</p>
+                    </div>
+                {% endif %}
+                <div class="task-footer">
+                    <div class="task-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Criada em: {{ task.date_created.strftime('%d/%m/%Y') }}</span>
+                    </div>
+                    {% if task.due_date %}
+                        <div class="task-date {% if task.due_date < now %}overdue{% endif %}">
+                            <i class="fas fa-clock"></i>
+                            <span>Prazo: {{ task.due_date.strftime('%d/%m/%Y') }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-tasks">
+            <p>Você ainda não possui tarefas.</p>
+            <a href="{{ url_for('add_task') }}" class="btn primary">Adicionar Tarefa</a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const taskCards = document.querySelectorAll('.task-card');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Atualizar botões ativos
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                const filter = button.getAttribute('data-filter');
+                
+                // Filtrar tarefas
+                taskCards.forEach(card => {
+                    if (filter === 'all') {
+                        card.style.display = 'block';
+                    } else if (filter === 'pending' && !card.classList.contains('completed')) {
+                        card.style.display = 'block';
+                    } else if (filter === 'completed' && card.classList.contains('completed')) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

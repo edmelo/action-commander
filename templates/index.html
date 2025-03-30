@@ -1,0 +1,45 @@
+
+{% extends 'base.html' %}
+
+{% block title %}TaskManager - Início{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h2>Gerencie suas tarefas de forma simples e eficiente</h2>
+        <p>TaskManager ajuda você a organizar suas tarefas diárias, definir prazos e acompanhar seu progresso.</p>
+        <div class="hero-buttons">
+            {% if 'user_id' not in session %}
+                <a href="{{ url_for('register') }}" class="btn primary">Começar Agora</a>
+                <a href="{{ url_for('login') }}" class="btn secondary">Entrar</a>
+            {% else %}
+                <a href="{{ url_for('dashboard') }}" class="btn primary">Ir para o Dashboard</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="hero-image">
+        <img src="{{ url_for('static', filename='images/task_illustration.svg') }}" alt="Ilustração de gerenciamento de tarefas">
+    </div>
+</section>
+
+<section class="features">
+    <h2>Recursos</h2>
+    <div class="feature-cards">
+        <div class="feature-card">
+            <i class="fas fa-plus-circle"></i>
+            <h3>Adicione Tarefas</h3>
+            <p>Crie novas tarefas com título, descrição e prazo.</p>
+        </div>
+        <div class="feature-card">
+            <i class="fas fa-edit"></i>
+            <h3>Edite Facilmente</h3>
+            <p>Atualize suas tarefas sempre que necessário.</p>
+        </div>
+        <div class="feature-card">
+            <i class="fas fa-check-circle"></i>
+            <h3>Marque Concluídas</h3>
+            <p>Acompanhe seu progresso marcando as tarefas concluídas.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
